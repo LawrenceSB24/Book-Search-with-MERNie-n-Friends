@@ -8,7 +8,7 @@ import { SAVE_BOOK } from '../utils/mutation';
 
 
 // Old module for saving books using saveBook() from "API"
-// import { saveBook, searchGoogleBooks } from '../utils/API';
+import { searchGoogleBooks } from '../utils/API';
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -16,19 +16,20 @@ const SearchBooks = () => {
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
 
-  // create state to hold saved bookId values
-  // For SOME reason, { error } is not working properly. Leaving it out for now.
-  const [saveBook] = useMutation(SAVE_BOOK);
-
+  
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
-
+  
   // Created state for saving books using the `useMutation()` hook executing "SAVE_BOOK"
-
+  // For SOME reason, { error } is not working properly. Leaving it out for now.
+  const [saveBook, {error}] = useMutation(SAVE_BOOK);
+  
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount0
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
   });
+
+  // create state to hold saved bookId values
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
@@ -39,7 +40,7 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await fetch(`https://www.googleapis.com/books/v1/volumes/q=${searchInput}`);
+      const response = await searchGoogleBooks(searchInput);
 
       if (!response.ok) {
         throw new Error('something went wrong!');
