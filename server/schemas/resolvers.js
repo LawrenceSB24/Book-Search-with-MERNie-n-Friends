@@ -41,23 +41,23 @@ const resolvers = {
             return (token, user);
         },
 
-        saveBook: async (parent, args, context) => {
+        saveBook: async (parent, {bookData}, context) => {
             if (context.user) {
                 const updateUser = await User.findOneAndUpdate(
                     {_id: context.user._id},
-                    {$push: {savedBooks: args.bookData}},
-                    {new: true, runValidators: true}
+                    {$push: {saveBook: bookData}},
+                    {new: true}
                 );
                 return updateUser;
             }
 
             throw new AuthenticationError('You must be signed in.');
         },
-        deleteBook: async (parent, args, context) => {
+        deleteBook: async (parent, {bookId}, context) => {
             if (context.user) {
                 const updateUser = await User.findOneAndUpdate(
                     {_id: context.user._id},
-                    {$pull: {savedBooks: {bookId: args.bookId}}},
+                    {$pull: {savedBooks: {bookId: bookId}}},
                     {new: true}
                 );
                 return updateUser;
